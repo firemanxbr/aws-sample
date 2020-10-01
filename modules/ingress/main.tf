@@ -71,23 +71,4 @@ resource "helm_release" "ingress_gateway" {
   }
 }
 
-# create base domain for EKS Cluster
-#data "kubernetes_service" "ingress_gateway" {
-#  metadata {
-#    name = join("-", [helm_release.ingress_gateway.chart, helm_release.ingress_gateway.name])
-#  }
-#}
-
 data "aws_elb_hosted_zone_id" "elb_zone_id" {}
-
-#resource "aws_route53_record" "eks_domain" {
-#  zone_id = data.aws_route53_zone.base_domain.id
-#  name    = var.dns_base_domain
-#  type    = "A"
-#
-#  alias {
-#    name                   = data.kubernetes_service.ingress_gateway.load_balancer_ingress.0.hostname
-#    zone_id                = data.aws_elb_hosted_zone_id.elb_zone_id.id
-#    evaluate_target_health = true
-#  }
-#}
