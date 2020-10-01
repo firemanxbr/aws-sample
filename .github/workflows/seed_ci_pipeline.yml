@@ -5,15 +5,14 @@ on:
     types:
       - labeled
 
-defaults:
-  run:
-    working-directory: ${{ env.TF_ACTION_WORKING_DIR }}
-
 jobs:
   prcheck:
     name: Check the Pull Request is labeled correctly
     if: github.event.label.name == 'seed'
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ env.TF_ACTION_WORKING_DIR }}
     steps:
 
       - name: Checkout repository
