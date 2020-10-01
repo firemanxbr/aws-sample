@@ -39,6 +39,22 @@ variable "spot_termination_handler_chart_namespace" {
   type        = string
   description = "Kubernetes namespace to deploy EKS Spot termination handler Helm chart."
 }
+variable "atlantis_chart_name" {
+  type        = string
+  description = "Atlantis Helm chart name."
+}
+variable "atlantis_chart_repo" {
+  type        = string
+  description = "Atlantis Helm repository name."
+}
+variable "atlantis_chart_version" {
+  type        = string
+  description = "Atlantis Helm chart version."
+}
+variable "atlantis_chart_namespace" {
+  type        = string
+  description = "Kubernetes namespace to deploy Atlantis Helm chart."
+}
 
 # render Admin & Developer users list with the structure required by EKS module
 locals {
@@ -112,6 +128,15 @@ provider "helm" {
     load_config_file       = false
   }
   version = "~> 1.2"
+}
+
+# deploy atlantis
+resource "helm_release" "atlantis" {
+  name       = var.atlantis_chart_name
+  chart      = var.atlantis_chart_name
+  repository = var.atlantis_chart_repo
+  version    = var.atlantis_chart_version
+  namespace  = var.atlantis_chart_namespace
 }
 
 # deploy spot termination handler

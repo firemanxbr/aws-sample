@@ -24,6 +24,10 @@ module "eks" {
   spot_termination_handler_chart_repo      = "https://aws.github.io/eks-charts"
   spot_termination_handler_chart_version   = "0.9.1"
   spot_termination_handler_chart_namespace = "kube-system"
+  atlantis_chart_name                      = "atlantis"
+  atlantis_chart_repo                      = "https://kubernetes-charts.storage.googleapis.com"
+  atlantis_chart_version                   = "3.12.2"
+  atlantis_chart_namespace                 = "atlantis"
 }
 
 module "iam" {
