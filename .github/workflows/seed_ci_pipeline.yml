@@ -6,40 +6,40 @@ on:
       - labeled
 
 jobs:
-  prcheck:
-    name: Check the Pull Request is labeled correctly
+  seed_job:
+    name: 'Check the Pull Request is labeled correctly'
     if: github.event.label.name == 'seed'
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ${{ env.TF_ACTION_WORKING_DIR }}
+    
     steps:
-
-      - name: Checkout repository
-        uses: actions/checkout@v2.3.3
-
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v1.2.0
+      - name: 'Checkout'
+        uses: actions/checkout@master
+      
+      - name: 'Terraform Init'
+        uses: hashicorp/terraform-github-actions@master
         with:
-          terraform_version: 0.13.3
-        env: 
+          tf_actions_version: 0.13.3
+          tf_actions_subcommand: 'init'
+          tf_actions_working_dir: 'seed_s3'
+        
+      - name: 'Terraform Plan'
+        uses: hashicorp/terraform-github-actions@master
+        with:
+          tf_actions_version: 0.13.3
+          tf_actions_subcommand: 'plan'
+          tf_actions_working_dir: 'seed_s3'
+        env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          TF_ACTION_WORKING_DIR: 'seed_s3'
           AWS_ACCESS_KEY_ID:  ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY:  ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
-      - name: Terraform Init
-        id: init
-        run: terraform init
-
-      - name: Terraform Plan
-        id: plan
-        run: terraform plan
-
-      - name: Terraform Plan Status
-        if: steps.plan.outcome == 'failure'
-        run: exit 1
-
-      - name: Terraform Apply
-        if: github.ref == 'refs/heads/master' && github.event_name == 'push'
-        run: terraform apply -auto-approve
+      - name: 'Terraform Apply'
+        uses: hashicorp/terraform-github-actions@master
+        with:
+          tf_actions_version: 0.13.3
+          tf_actions_subcommand: 'apply'
+          tf_actions_working_dir: 'seed_s3'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          AWS_ACCESS_KEY_ID:  ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY:  ${{ secrets.AWS_SECRET_ACCESS_KEY }}
